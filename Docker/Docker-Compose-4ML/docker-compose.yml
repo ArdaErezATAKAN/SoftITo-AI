@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - logistic
+      - randomforest
+      - knn
+      - svm
+    networks:
+      - mlnetwork
+
+  logistic:
+    build: ./logistic
+    networks:
+      - mlnetwork
+
+  randomforest:
+    build: ./randomforest
+    networks:
+      - mlnetwork
+
+  knn:
+    build: ./knn
+    networks:
+      - mlnetwork
+
+  svm:
+    build: ./svm
+    networks:
+      - mlnetwork
+
+networks:
+  mlnetwork:
+    driver: bridge
