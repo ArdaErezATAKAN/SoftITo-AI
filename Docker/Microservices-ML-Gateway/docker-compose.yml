@@ -1,0 +1,68 @@
+services:
+
+  ml-gradient:
+    build: ./services/gradient_boosting
+    container_name: ml-gradient
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  ml-decision:
+    build: ./services/decision_tree
+    container_name: ml-decision
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  ml-naivebayes:
+    build: ./services/naive_bayes
+    container_name: ml-naivebayes
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  ml-neural:
+    build: ./services/neural_network
+    container_name: ml-neural
+    ports:
+      - "5004:5004"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  ml-gateway:
+    build: ./gateway
+    container_name: ml-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - GRADIENT_URL=http://ml-gradient:5001
+      - DECISION_URL=http://ml-decision:5002
+      - NAIVEBAYES_URL=http://ml-naivebayes:5003
+      - NEURAL_URL=http://ml-neural:5004
+    depends_on:
+      - ml-gradient
+      - ml-decision
+      - ml-naivebayes
+      - ml-neural
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    driver: bridge
